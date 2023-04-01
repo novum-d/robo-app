@@ -1,20 +1,66 @@
 use yew::prelude::*;
 fn main() {
     yew::Renderer::<App>::new().render();
+    wasm_logger::init(wasm_logger::Config::default());
 }
 
 #[function_component]
 fn App() -> Html {
+    let keyword = use_state(|| "".to_string());
+    let oninput = {
+        let keyword = keyword.clone();
+        Callback::from(move |e: InputEvent| {
+            let value = e.data();
+            match value {
+                Some(value) => {
+                    keyword.set((*keyword).clone() + &value);
+                }
+                None => {
+                    keyword.set("".to_string());
+                }
+            }
+        })
+    };
+    let onclick = {
+        let keyword = keyword.clone();
+        Callback::from(move |e: MouseEvent| {
+            e.prevent_default();
+            log::info!("keyword: {}", *keyword);
+        })
+    };
+
     html! {
-        <div class="min-h-screen bg-slate-500">
-            <div class="grid place-content-center">
-                <div class="form-control">
-                  <div class="input-group">
-                    <input type="text" placeholder="Search…" class="input input-bordered" />
-                    <button class="btn btn-square">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    </button>
-                  </div>
+        <div class="min-h-screen bg-slate-300">
+            <div class="flex flex-col gap-4 pt-5 px-[70ch]">
+                <div class="grid place-content-center">
+                    <div class="form-control">
+                      <div class="input-group">
+                        <input type="text" placeholder="Search…" class="input input-bordered" value={(*keyword).clone()} {oninput} />
+                        <button class="btn btn-square" {onclick}>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        </button>
+                      </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="table table-zebra w-full">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>{"Name"}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>{"1"}</th>
+                        <td>{"Cy Ganderton"}</td>
+                      </tr>
+                      <tr>
+                        <th>{"2"}</th>
+                        <td>{"Hart Hagerty"}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
             </div>
         </div>
