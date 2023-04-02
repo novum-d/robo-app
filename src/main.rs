@@ -1,7 +1,18 @@
+use anyhow::Ok;
+use config::Config;
 use yew::prelude::*;
 fn main() {
     yew::Renderer::<App>::new().render();
     wasm_logger::init(wasm_logger::Config::default());
+}
+
+fn exsists(dial: i32) -> anyhow::Result<bool> {
+    let config = Config::builder()
+        .add_source(config::File::with_name("Settings"))
+        .add_source(config::Environment::with_prefix("ROBO"))
+        .build()?;
+    let config: TodoConfig = config.try_deserialize().context("Failed to read config")?;
+    Ok(true)
 }
 
 #[function_component]
@@ -31,7 +42,7 @@ fn App() -> Html {
 
     html! {
         <div class="min-h-screen bg-slate-300">
-            <div class="flex flex-col gap-4 pt-5 px-[70ch]">
+            <div class="flex flex-col gap-4 pt-5 px-[10ch] min-w-min">
                 <div class="grid place-content-center">
                     <div class="form-control">
                       <div class="input-group">
